@@ -23,11 +23,12 @@ namespace Kodai100.Tcp
     {
 
         TCPServer server;
+        TcpCommunicator client;
 
         public SocketType type = SocketType.Server;
 
-        public string ip = "127.0.0.1";
-        public int openPort = 7000;
+        public string host = "127.0.0.1";
+        public int port = 7000;
 
         public OnMessageEvent OnMessage;
         
@@ -36,14 +37,20 @@ namespace Kodai100.Tcp
 
             if(type == SocketType.Server)
             {
-                server = new TCPServer(new IPEndPoint(IPAddress.Any, openPort), OnMessage);
+                server = new TCPServer(new IPEndPoint(IPAddress.Any, port), OnMessage);
 
                 var t = server.Listen();
                 if (t.IsFaulted) t.Wait();
             }
+            else
+            {
+                client = new TcpCommunicator(host, port, OnMessage);
+
+                var t = client.Listen();
+                if (t.IsFaulted) t.Wait();
+            }
             
         }
-
 
         private void OnDisable()
         {
@@ -51,6 +58,10 @@ namespace Kodai100.Tcp
             if(type == SocketType.Server)
             {
                 server.Stop();
+            }
+            else
+            {
+                client.Dispose();
             }
 
             

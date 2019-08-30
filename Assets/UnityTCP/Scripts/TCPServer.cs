@@ -112,6 +112,7 @@ namespace Kodai100.Tcp
             clients.Remove(client);
         }
 
+
         void ReturnMessageToClient(TcpClient client)
         {
             var terminator = "\r\n";
@@ -120,6 +121,8 @@ namespace Kodai100.Tcp
             client.GetStream().Write(msg, 0, msg.Length);
             client.GetStream().Flush();
         }
+
+
 
         async Task NetworkStreamHandler(TcpClient client)
         {
