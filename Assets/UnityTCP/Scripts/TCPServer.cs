@@ -115,7 +115,7 @@ namespace Kodai100.Tcp
             mainContext.Post(_ => OnEstablished.Invoke(client), null);
             clients.Add(client);
 
-            await NetworkStreamHandler(client).ConfigureAwait(false);
+            await NetworkStreamHandler(client);
             
             mainContext.Post(_ => OnDisconnected.Invoke(clientEndpoint), null);
             clients.Remove(client);
