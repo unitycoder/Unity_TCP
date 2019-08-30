@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Text;
 using System.IO;
 
@@ -17,13 +16,17 @@ namespace Kodai100.Tcp
         IPEndPoint endpoint;
 
         TcpListener listener;
-        HashSet<TcpClient> clients = new HashSet<TcpClient>();
+        List<TcpClient> clients = new List<TcpClient>();
 
         SynchronizationContext mainContext;
         volatile bool acceptLoop = true;
         
         OnMessageEvent OnMessage;
 
+        OnEstablishedEvent OnEstablished;
+        OnDisconnectedEvent OnDisconnected;
+
+        public IReadOnlyList<TcpClient> Clients => clients;
 
         public TCPServer(IPEndPoint endpoint, OnMessageEvent onMessage)
         {
@@ -33,6 +36,14 @@ namespace Kodai100.Tcp
             mainContext = SynchronizationContext.Current;
 
             OnMessage = onMessage;
+            
+        }
+
+        public TCPServer(IPEndPoint endpoint, OnMessageEvent onMessage, OnEstablishedEvent onEstablished, OnDisconnectedEvent onDisconnected) : this(endpoint, onMessage)
+        {
+            OnEstablished = onEstablished;
+            OnDisconnected = onDisconnected;
+
         }
         
         public async Task Listen()
@@ -100,30 +111,17 @@ namespace Kodai100.Tcp
         async Task OnConnectClient(TcpClient client)
         {
             var clientEndpoint = client.Client.RemoteEndPoint;
-
-            Debug.Log($"<color=yellow>Established</color> : {clientEndpoint}");
+            
+            mainContext.Post(_ => OnEstablished.Invoke(client), null);
             clients.Add(client);
 
-            ReturnMessageToClient(client);
-
             await NetworkStreamHandler(client).ConfigureAwait(false);
-
-            Debug.Log($"<color=red>Disconnected</color> : {clientEndpoint}");
+            
+            mainContext.Post(_ => OnDisconnected.Invoke(clientEndpoint), null);
             clients.Remove(client);
         }
-
-
-        void ReturnMessageToClient(TcpClient client)
-        {
-            var terminator = "\r\n";
-
-            byte[] msg = Encoding.GetEncoding("UTF-8").GetBytes($"Established{terminator}");
-            client.GetStream().Write(msg, 0, msg.Length);
-            client.GetStream().Flush();
-        }
-
-
-
+        
+        
         async Task NetworkStreamHandler(TcpClient client)
         {
 
@@ -146,6 +144,24 @@ namespace Kodai100.Tcp
 
             // Disconnected
         }
+
+
+        public void BroadcastToClients(byte[] data)
+        {
+            foreach (var c in Clients)
+            {
+                c.GetStream().Write(data, 0, data.Length);
+                c.GetStream().Flush();
+            }
+        }
+
+
+        public void SendMessageToClient(TcpClient c, byte[] data)
+        {
+            c.GetStream().Write(data, 0, data.Length);
+            c.GetStream().Flush();
+        }
+
 
         public void Dispose()
         {

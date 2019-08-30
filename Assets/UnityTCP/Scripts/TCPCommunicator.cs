@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Kodai100.Tcp
 {
@@ -92,8 +91,7 @@ namespace Kodai100.Tcp
 
             while (running)
             {
-                // await後にUnityメインスレッドに戻っては困るような場合、ConfigureAwaitをつける（そのままスレッドプール上で処理を続けたい場合）
-                await Task.Run(() => Receive()).ConfigureAwait(false);
+                await Task.Run(() => Receive());
             }
             
         }

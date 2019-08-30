@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Kodai100.Tcp
 {
@@ -22,49 +15,99 @@ namespace Kodai100.Tcp
     public class UnityTCP : MonoBehaviour
     {
 
-        TCPServer server;
-        TcpCommunicator client;
+        [SerializeField]
+        SocketType socketType = SocketType.Server;
+        public SocketType SocketType => socketType;
 
-        public SocketType type = SocketType.Server;
+        [SerializeField]
+        private string host = "127.0.0.1";
+        public string Host => host;
 
-        public string host = "127.0.0.1";
-        public int port = 7000;
+        [SerializeField]
+        private int port = 7000;
+        public int Port => port;
+
+        public IReadOnlyList<TcpClient> Clients => tcpServer?.Clients;
 
         public OnMessageEvent OnMessage;
+        public OnEstablishedEvent OnEstablished;
+        public OnDisconnectedEvent OnDisconnected;
         
+        private TCPServer tcpServer;
+        private TcpCommunicator tcpClient;
+
+
+
+
         void Start()
         {
 
-            if(type == SocketType.Server)
+            if(socketType == SocketType.Server)
             {
-                server = new TCPServer(new IPEndPoint(IPAddress.Any, port), OnMessage);
+                tcpServer = new TCPServer(new IPEndPoint(IPAddress.Any, port), OnMessage, OnEstablished, OnDisconnected);
 
-                var t = server.Listen();
-                if (t.IsFaulted) t.Wait();
+                var _ = tcpServer.Listen();
             }
             else
             {
-                client = new TcpCommunicator(host, port, OnMessage);
+                tcpClient = new TcpCommunicator(host, port, OnMessage);
 
-                var t = client.Listen();
-                if (t.IsFaulted) t.Wait();
+                var _ = tcpClient.Listen();
             }
             
+        }
+
+
+        public void BroadcastToClients(string data)
+        {
+            if(socketType == SocketType.Server)
+            {
+                var msg = BuildMessage(data);
+                tcpServer.BroadcastToClients(msg);
+            }
+        }
+
+
+        public void SendMessageToClient(TcpClient client, string data)
+        {
+            if (socketType == SocketType.Server)
+            {
+                var msg = BuildMessage(data);
+                tcpServer.SendMessageToClient(client, msg);
+            }
+        }
+
+
+        public void SendMessageToServer(string data)
+        {
+            if(socketType == SocketType.Client)
+            {
+                
+                tcpClient.Send(BuildMessage(data));
+            }
         }
 
         private void OnDisable()
         {
 
-            if(type == SocketType.Server)
+            if(socketType == SocketType.Server)
             {
-                server.Stop();
+                tcpServer.Stop();
             }
             else
             {
-                client.Dispose();
+                tcpClient.Dispose();
             }
 
             
+        }
+
+
+        byte[] BuildMessage(string data)
+        {
+            var terminator = "\r\n";
+
+            return Encoding.GetEncoding("UTF-8").GetBytes($"{data}{terminator}");
         }
 
     }

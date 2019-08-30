@@ -149,7 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998b207d9d474664ca1ebaaae0766d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openPort: 7000
+  socketType: 1
+  host: 127.0.0.1
+  port: 7000
   OnMessage:
     m_PersistentCalls:
       m_Calls:
@@ -166,6 +168,38 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: Kodai100.Tcp.OnMessageEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  OnEstablished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1263992342}
+        m_MethodName: OnEstablished
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Kodai100.Tcp.OnEstablishedEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnDisconnected:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1263992342}
+        m_MethodName: OnDisconnected
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Kodai100.Tcp.OnDisconnectedEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!4 &275373278
 Transform:
   m_ObjectHideFlags: 0
@@ -306,3 +340,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eb6869e001119a47b2d6f3cad86e446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tcpServer: {fileID: 275373277}
+  text: SampleText
+  clientId: 0

@@ -1,4 +1,6 @@
-﻿using UnityEngine.Events;
+﻿using System.Net;
+using System.Net.Sockets;
+using UnityEngine.Events;
 
 namespace Kodai100.Tcp
 {
@@ -8,8 +10,13 @@ namespace Kodai100.Tcp
     {
     }
 
-    public interface ITcpReceivable
+    [System.Serializable]
+    public class OnEstablishedEvent : UnityEvent<TcpClient>
     {
-        void OnMessage(string message);
+    }
+
+    [System.Serializable]
+    public class OnDisconnectedEvent : UnityEvent<EndPoint>
+    {
     }
 }
