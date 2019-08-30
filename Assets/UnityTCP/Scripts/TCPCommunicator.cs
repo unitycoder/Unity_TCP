@@ -10,16 +10,7 @@ namespace Kodai100.Tcp
 
     public class TcpCommunicator : IDisposable
     {
-
-        private TcpClient TcpClient { get; }
-
-        protected Socket Socket => TcpClient?.Client;
-
-        SynchronizationContext mainContext;
-        OnMessageEvent OnMessage;
-
-        bool running = false;
-
+        
         public string Name { get; }
 
         public bool IsConnecting {
@@ -33,10 +24,21 @@ namespace Kodai100.Tcp
                 }
                 catch
                 {
-                    return false; // 強制で切断した場合に Socket が null になるため、例外を無視
+                    return false;
                 }
             }
         }
+
+
+        private TcpClient TcpClient { get; }
+
+        private Socket Socket => TcpClient?.Client;
+
+        private SynchronizationContext mainContext;
+        private OnMessageEvent OnMessage;
+
+        private bool running = false;
+
 
         public TcpCommunicator(TcpClient tcpClient, OnMessageEvent onMessage)
         {
@@ -122,21 +124,6 @@ namespace Kodai100.Tcp
                 throw new ApplicationException("Attempt to receive failed.", ex);
             }
         }
-
-
-
-
-        static string ToHexString(byte[] data)
-        {
-            if (data == null) throw new ArgumentNullException(nameof(data));
-            var sb = new StringBuilder(data.Length * 2);
-
-            foreach (var item in data)
-            {
-                sb.Append($"{item:X2}");
-            }
-
-            return sb.ToString();
-        }
+        
     }
 }
