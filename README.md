@@ -16,11 +16,11 @@ async/await TCP socket implementation for Unity3d.
 
 ## As a client
 1. Attatch `UnityTCP.cs` to arbitary GameObject
-2. Change socket type to 'Client'
+2. Change socket type to `Client`
 3. Set host address and port number you want to access
 4. Set `OnMessage` callback event
     - this will be called when a server send message to you
 
 
 # Sample
-Sample scene is included in 'Assets/UnityTCP/Sample.unity'
+Sample scene is included in `Assets/UnityTCP/Sample.unity`
