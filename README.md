@@ -1,7 +1,7 @@
 # Unity TCP
 async/await TCP socket implementation for Unity3d.
 
-![thumbnail](https://github.com/kodai100/Unity_TCP/tree/master/Assets/UnityTCP/Textures/thumbnail.png)
+![thumbnail](https://github.com/kodai100/Unity_TCP/blob/master/Assets/UnityTCP/Textures/thumbnail.png)
 
 # How to use
 
