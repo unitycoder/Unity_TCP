@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998b207d9d474664ca1ebaaae0766d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  socketType: 1
+  socketType: 0
   host: 127.0.0.1
   port: 7000
   OnMessage:
